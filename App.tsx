@@ -1,20 +1,45 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { FontAwesome6} from '@expo/vector-icons';
+import TasksScreen from './src/screens/TasksScreen';
+import HomeScreen from './src/screens/HomeScreen';
+import HouseholdScreen from './src/screens/HouseholdScreen';
 
 export default function App() {
+
+  const Tab = createBottomTabNavigator();
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+      <NavigationContainer>
+        <Tab.Navigator>
+        <Tab.Screen 
+          name="Home" 
+          component={HomeScreen} 
+          options={{ 
+            title: 'Ajankohtaista',
+            tabBarShowLabel: false,
+            tabBarIcon: ({ size, color }) =>  <FontAwesome6 name={'house'} size={size} color={color} />
+          }} 
+        />
+        <Tab.Screen 
+          name="Tasks" 
+          component={TasksScreen} 
+          options={{ 
+            title: 'Tehtävälista',
+            tabBarShowLabel: false,
+            tabBarIcon: ({ size, color }) =>  <FontAwesome6 name={'list'} size={size} color={color} />
+          }} 
+        />
+        <Tab.Screen 
+          name="Household" 
+          component={HouseholdScreen} 
+          options={{ 
+            title: 'Osallistujat',
+            tabBarShowLabel: false,
+            tabBarIcon: ({ size, color }) =>  <FontAwesome6 name={'user-group'} size={22} color={color} />
+          }} 
+        />
+      </Tab.Navigator>
+      </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
