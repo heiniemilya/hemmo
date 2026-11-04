@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import TasksScreen from './src/screens/TasksScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import HouseholdScreen from './src/screens/HouseholdScreen';
+import AddTaskScreen from './src/screens/AddTaskScreen';
 
 export default function App() {
 
@@ -66,6 +67,13 @@ export default function App() {
           tabBarShowLabel: false,
           tabBarIcon: ({ size, color }) =>  <FontAwesome6 name={'user-group'} size={17} color={color} />
         }} 
+      />
+      <Tab.Screen
+        name="Lisää tehtävä"
+        component={AddTaskScreen}
+        options={{
+          tabBarItemStyle: { display: 'none' }, // Piilota
+        }}
       />
       </Tab.Navigator>
     </NavigationContainer>
