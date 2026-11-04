@@ -18,7 +18,7 @@ export const getDueInfo = (dueDateStr: string) => {
         return {
         status: 'overdue' as DueStatus,
         label: `myöhässä ${Math.abs(diffDays)} pv`, // myöhässä olevien päivien määrä absoluuttisena (+) arvona
-        topRowBackgroundColor: '#c3504e', // punainen
+        topRowBackgroundColor: '#d14947', // punainen
         cardBackgroundColor: '#f5a8a3',
         borderColor: '#dc857b',
         textDark: '#881f15',
@@ -38,8 +38,8 @@ export const getDueInfo = (dueDateStr: string) => {
         return {
         status: 'future' as DueStatus,
         label: diffDays === 1 ? 'huomenna' : `${diffDays} pv aikaa`, // tarkistetaan, onko ero 1 päivä vai useampi
-        topRowBackgroundColor: '#548a58', // vihreä
-        cardBackgroundColor: '#b5dab8', 
+        topRowBackgroundColor: '#4d8551', // vihreä
+        cardBackgroundColor: '#aad2ad', 
         borderColor: '#8bbf8b',
         textDark: '#185a21',
         textLight: '#e7f3e8',

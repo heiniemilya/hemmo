@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, SectionList, TouchableOpacity, Button } from 'react-native';
+import { StyleSheet, Text, View, SectionList, TouchableOpacity} from 'react-native';
 import { Task } from '../types/task';
 import { FontAwesome, FontAwesome6} from '@expo/vector-icons';
 import { getDueInfo } from '../utils/taskUtils';
@@ -57,10 +57,10 @@ const TaskCard = ({ item }: { item: Task }) => {
       {/* Alarivi: Tehtävän nimi ja ikonit */}
       <View style={styles.bottomRow}>
         <Text style={[styles.title, { color: due.textDark }]}>{item.title}</Text>
-        <TouchableOpacity style={[styles.iconButton, { borderLeftColor: due.borderColor }]} onPress={() => handleEdit(item.id)}>
+        <TouchableOpacity style={[styles.iconButton, { borderLeftColor: due.borderColor }]} onPress={() => handleEdit(item)}>
           <FontAwesome6 name="gear" size={20} color={due.textDark} padding={4} />
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.iconButton, { borderLeftColor: due.borderColor }]} onPress={() => handleMarkDone(item.id)}>
+        <TouchableOpacity style={[styles.iconButton, { borderLeftColor: due.borderColor }]} onPress={() => handleMarkDone(item)}>
           <FontAwesome name="check" size={28} color={due.textDark} />
         </TouchableOpacity>
       </View>
@@ -102,15 +102,16 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fafafa',
+    backgroundColor: '#f2f3f7',
     paddingHorizontal: 10,
   },
   sectionHeader: {
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: 'bold',
     marginTop: 18,
     marginBottom: 5,
-    color: '#333',
+    color: '#7b96a1',
+    textTransform: 'uppercase',
   },
   card: {
     borderRadius: 8,
