@@ -1,54 +1,8 @@
 import { StyleSheet, Text, View, SectionList, TouchableOpacity, Button } from 'react-native';
 import { Task } from '../types/task';
 import { FontAwesome, FontAwesome6} from '@expo/vector-icons';
-
-type DueStatus = 'overdue' | 'today' | 'future';
-
-////////// DueDate-päivämäärän vertailu nykyhetkeen ja eron laskeminen ///////////////
-const getDueInfo = (dueDateStr: string) => {
-  const today = new Date(); 
-  today.setHours(0, 0, 0, 0); // nollataan kellonaika vertailua varten
-
-  const due = new Date(dueDateStr); // 'YYYY-MM-DD' muotoisen merkkijonon muuntaminen Date-objektiksi
-  due.setHours(0, 0, 0, 0); 
-
-  const diffTime = due.getTime() - today.getTime(); 
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // lasketaan ero päivinä
-
-  // Palautetaan teksti ja väri eron perusteella
-  if (diffDays < 0) {
-    return {
-      status: 'overdue' as DueStatus,
-      label: `myöhässä ${Math.abs(diffDays)} pv`,
-      topRowBackgroundColor: '#c3504e', // punainen
-      cardBackgroundColor: '#f5a8a3',
-      borderColor: '#dc857b',
-      textDark: '#881f15',
-      textLight: '#f0e5e4',
-    };
-  } else if (diffDays === 0) {
-    return {
-      status: 'today' as DueStatus,
-      label: 'tänään',
-      topRowBackgroundColor: '#c48827', // keltainen
-      cardBackgroundColor: '#f1d19a', 
-      borderColor: '#d4b06d',
-      textDark: '#704503',
-      textLight: '#f5f3ee',
-    };
-  } else {
-    return {
-      status: 'future' as DueStatus,
-      label: diffDays === 1 ? 'huomenna' : `${diffDays} pv aikaa`,
-      topRowBackgroundColor: '#548a58', // vihreä
-      cardBackgroundColor: '#b5dab8', 
-      borderColor: '#8bbf8b',
-      textDark: '#185a21',
-      textLight: '#e7f3e8',
-    };
-  }
-};
-
+import { getDueInfo } from '../utils/taskUtils';
+  
 ///////////// Demo data //////////////
 const DATA: Task[] = [
   {
