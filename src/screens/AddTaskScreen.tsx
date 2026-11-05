@@ -1,51 +1,93 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { Task } from '../types/task';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, Platform, } from 'react-native';
 import { useState } from 'react';
 import { app } from '../../firebaseConfig';
 import { getDatabase, ref, push } from 'firebase/database';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
+//////////// Pääkomponentti //////////////
 export default function AddTaskScreen() {
 
   const db = getDatabase(app);
 
-  const [taskItem, setTaskItem] = useState<Task>({} as Task);
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('');
+  const [lastDoneDate, setLastDoneDate] = useState<Date>(new Date());
+  const [showPicker, setShowPicker] = useState(false);
 
+  ////////// Tehtävän tallennus ////////////
   const handleSave = () => {
-    if (!taskItem.title.trim()) {
+
+    // Syötettyjen tietojen tarkistus
+    if (!title.trim()) {
       Alert.alert('Otsikko puuttuu', 'Lisää otsikko');
       return;
     }
-    push(ref(db, '/tasks'), taskItem);
-    setTaskItem({
-      id: '',
-      title: '',
-      category: '',
-      intervalDays: 0,
-      season: 'koko vuosi',
-      notes: '',
-      lastDoneDate: '',
-      doneBy: '',
-      nextDueDate: '',
-    });
+
+    // Tallennettava tehtävä
+    const taskToSave = {
+      title: title.trim(),
+      category: category.trim() || 'Yleinen',
+      lastDoneDate: lastDoneDate.toISOString().split('T')[0],
+    };
+
+    // Tietojen vienti tietokantaan
+    push(ref(db, '/tasks'), taskToSave);
+    
+    // Lomakkeen tyhjennys
+    setTitle('');
+    setCategory('');
+    setLastDoneDate(new Date());
+
+    // Ilmoitus tallentamisen onnistumisesta
     Alert.alert('Valmis', 'Tehtävä lisätty');
   }
 
   return (
+    // Lomake
     <View style={styles.container}>
+
+      {/* Tehtävä */}
       <Text style={styles.label}>Tehtävän nimi *</Text>
       <TextInput
         style={styles.input}
         placeholder="Esim. imurointi"
-        value={taskItem.title}
-        onChangeText={text => setTaskItem({ ...taskItem, title: text })}
+        value={title}
+        onChangeText={text => setTitle(text) }
       />
+
+      {/* Kohde */}
       <Text style={styles.label}>Kohde / Huone</Text>
       <TextInput
         style={styles.input}
         placeholder="Esim. Keittiö"
-        value={taskItem.category}
-        onChangeText={text => setTaskItem({ ...taskItem, category: text })}
+        value={category}
+        onChangeText={text => setCategory(text) }
       />
+
+      {/* Päivämäärä */}
+        <Text style={styles.label}>Aloituspäivä</Text>
+        <TouchableOpacity style={styles.dateButton} onPress={() => setShowPicker(true)}>
+          <Text style={styles.dateButtonText}>
+            {lastDoneDate.toLocaleDateString('fi-FI')}
+          </Text>
+        </TouchableOpacity>
+        {/* Kalenteri */}
+        {showPicker && (
+          <DateTimePicker
+            value={lastDoneDate}
+            mode="date"
+            display="default"
+            onValueChange={(event, selectedDate) => {
+              setShowPicker(Platform.OS === 'ios');
+              if (selectedDate) {
+                setLastDoneDate(selectedDate);
+              }
+            }}
+            onDismiss={() => setShowPicker(false)}
+          />
+        )}
+
+      {/* Painike */}
       <TouchableOpacity style={styles.button} onPress={handleSave}>
         <Text style={{color: 'white'}}>Lisää tehtävä</Text>
       </TouchableOpacity>
@@ -53,6 +95,7 @@ export default function AddTaskScreen() {
   );
 }
 
+/////////// Tyylit //////////////
 const styles = StyleSheet.create({
    container: {
     flex: 1,
@@ -68,14 +111,33 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: '#ccc',
     borderWidth: 1,
+    borderRadius: 8,
+    backgroundColor: '#fff',
     marginBottom: 10,
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
+  },
+  dateButton: {
+    height: 40,
+    justifyContent: 'center',
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    marginBottom: 20,
+    paddingHorizontal: 12,
+  },
+  dateButtonText: {
+    fontSize: 15,
+    color: '#333',
   },
   button:{
+    height: 40,
     alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 8,
     backgroundColor: 'green',
-    padding: 10.
+    padding: 10,
   },
 });
