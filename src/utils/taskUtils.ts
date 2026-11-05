@@ -2,6 +2,7 @@ import { Task } from '../types/task';
 
 //////// DueDaten vertailu nykyhetkeen DueStatus-tyypin palauttamiseksi //////////
 export type DueStatus = 'overdue' | 'today' | 'future'; // Määritellään DueStatus tyyppi
+
 // Funktio, joka ottaa vastaan 'YYYY-MM-DD' muotoisen merkkijonon ja palauttaa DueStatus-tyypin
 export const getDueInfo = (dueDateStr: string) => {
     const today = new Date(); 
@@ -45,6 +46,26 @@ export const getDueInfo = (dueDateStr: string) => {
         textLight: '#e7f3e8',
         };
     }
+};
+
+
+///////// Tehtävien toistuvuuden määrittely /////////
+export type TimeUnit = 'days' | 'weeks' | 'months' | 'years';
+
+export const TimeUnits: { key: TimeUnit; label: string }[] = [
+    { key: 'days', label: 'pv' },
+    { key: 'weeks', label: 'vk' },
+    { key: 'months', label: 'kk' },
+    { key: 'years', label: 'v' },
+];
+
+// Aikayksikön muuttaminen päiviksi
+export const toIntervalDays = (amount: number, timeUnit: TimeUnit): number => {
+    if (timeUnit === 'days') return amount; 
+    if (timeUnit === 'weeks') return amount * 7;
+    if (timeUnit === 'months') return amount * 30;
+    if (timeUnit === 'years') return amount * 365;
+    return 0; // ei toistu
 };
 
 
