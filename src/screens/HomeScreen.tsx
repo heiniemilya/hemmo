@@ -5,6 +5,7 @@ import { getDueInfo, markTaskAsDone } from '../utils/taskUtils';
 import { useEffect, useState } from 'react';
 import { getDatabase, onValue, ref, update } from 'firebase/database';
 import { app } from '../../firebaseConfig';
+import { useNavigation } from '@react-navigation/native';
 
 const db = getDatabase(app);
 
@@ -34,6 +35,12 @@ const TaskCard = ({ item }: { item: Task }) => {
       }
     ])
   };
+
+  // Tehtävän muokkaaminen
+  const navigation = useNavigation<any>();
+  const handleEdit = (task: Task) => {
+    navigation.navigate('Muokkaa tehtävää', { task }); // Navigoi EditTaskScreenille ja vie mukanaan muokattavan tehtävän tiedot 
+  }
 
   return (
   <View style={[styles.card, { backgroundColor: due.cardBackgroundColor }]}>
