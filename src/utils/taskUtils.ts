@@ -1,4 +1,4 @@
-import { Task } from '../types/task';
+import { Task } from "../types/task";
 
 //////// DueDaten vertailu nykyhetkeen DueStatus-tyypin palauttamiseksi //////////
 export type DueStatus = 'overdue' | 'today' | 'future'; // Määritellään DueStatus tyyppi
@@ -67,5 +67,24 @@ export const toIntervalDays = (amount: number, timeUnit: TimeUnit): number => {
     if (timeUnit === 'years') return amount * 365;
     return 0; // ei toistu
 };
+
+
+//////////// Tehtävän merkitseminen valmiiksi /////////////
+// Tietojen päivittäminen
+export const markTaskAsDone = (item: Task): Task => {
+    return {
+        ...item, // säilytetään kaikki alkuperäisen tehtävän tiedot
+        lastDoneDate: new Date().toISOString().split('T')[0], // asetetaan nykyhetki 'YYYY-MM-DD' muotoisena merkkijonona
+        nextDueDate: calculateNextDueDate(item.intervalDays), // lasketaan uusi eräpäivä toistovälin perusteella
+    };
+};
+
+// Seuraavan eräpäivän laskeminen
+export const calculateNextDueDate = (intervalDays: number): string => { 
+    const nextDate = new Date(); // nykyinen päivämäärä
+    nextDate.setDate(nextDate.getDate() + intervalDays); // haetaan kuluvan kuukauden päivänumero ja lisätään siihen toistoväli
+    return nextDate.toISOString().split('T')[0]; // muuttaminen 'YYYY-MM-DD' - muotoon
+};
+
 
 

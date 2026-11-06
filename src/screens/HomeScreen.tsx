@@ -1,9 +1,9 @@
-import { StyleSheet, Text, View, SectionList, TouchableOpacity} from 'react-native';
+import { StyleSheet, Text, View, SectionList, TouchableOpacity, Alert} from 'react-native';
 import { Task } from '../types/task';
 import { FontAwesome, FontAwesome6} from '@expo/vector-icons';
-import { getDueInfo } from '../utils/taskUtils';
+import { getDueInfo, markTaskAsDone } from '../utils/taskUtils';
 import { useEffect, useState } from 'react';
-import { getDatabase, onValue, ref } from 'firebase/database';
+import { getDatabase, onValue, ref, update } from 'firebase/database';
 import { app } from '../../firebaseConfig';
 
 const db = getDatabase(app);
@@ -11,6 +11,27 @@ const db = getDatabase(app);
 ///////////// Tehtäväkortti /////////////
 const TaskCard = ({ item }: { item: Task }) => {
   const due = getDueInfo(item.nextDueDate);
+
+  // Tehtävän merkkaaminen valmiiksi
+  const handleMarkDone = (task: Task) => {
+    const updatedTask = markTaskAsDone(task);
+    Alert.alert('Merkitse tehtävä valmiiksi', 'Oletko varma?', [
+      {
+        text: 'Peruuta',
+        style: 'cancel'
+      },
+      {
+        text: 'OK',
+        onPress: () => {
+          update(ref(db, `/tasks/${task.id}`), {
+            lastDoneDate: updatedTask.lastDoneDate,
+            nextDueDate: updatedTask.nextDueDate,
+          });
+        }
+        
+      }
+    ])
+  };
 
   return (
   <View style={[styles.card, { backgroundColor: due.cardBackgroundColor }]}>
