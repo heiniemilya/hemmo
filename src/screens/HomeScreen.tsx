@@ -2,39 +2,11 @@ import { StyleSheet, Text, View, SectionList, TouchableOpacity} from 'react-nati
 import { Task } from '../types/task';
 import { FontAwesome, FontAwesome6} from '@expo/vector-icons';
 import { getDueInfo } from '../utils/taskUtils';
-  
-///////////// Demo data //////////////
-const DATA: Task[] = [
-  {
-    id: "1", title: "Imurointi", category: "Yleinen", intervalDays: 7, season: 'koko vuosi', 
-    notes: "", lastDoneDate: "2026-10-10", doneBy: "user1", nextDueDate: "2026-10-17" 
-  },
-  {
-    id: "2", title: "Ikkunoiden pesu", category: "Yleinen", intervalDays: 365, season: 'koko vuosi', 
-    notes: "", lastDoneDate: "2026-09-12", doneBy: "user1", nextDueDate: "2027-09-13"
-  },
-  {
-    id: "3", title: "Lakanoiden vaihto", category: "Makuuhuone", intervalDays: 7, season: 'koko vuosi', 
-    notes: "", lastDoneDate: "2026-10-25", doneBy: "", nextDueDate: "2026-11-01"
-  },
-  {
-    id: "4", title: "Pyykin pesu", category: "Yleinen", intervalDays: 7, season: 'koko vuosi', 
-    notes: "", lastDoneDate: "2026-10-28", doneBy: "", nextDueDate: "2026-11-03"
-  },
-  {
-    id: "5", title: "Tiskikoneen täyttö", category: "Keittiö", intervalDays: 2, season: 'koko vuosi', 
-    notes: "", lastDoneDate: "2026-10-27", doneBy: "", nextDueDate: "2026-11-02"
-  },
-  {
-    id: "6", title: "Nurmikon leikkuu", category: "Piha", intervalDays: 30, season: 'kesä', 
-    notes: "", lastDoneDate: "2026-08-27", doneBy: "", nextDueDate: "2026-09-26"
-  },
-];
+import { useEffect, useState } from 'react';
+import { getDatabase, onValue, ref } from 'firebase/database';
+import { app } from '../../firebaseConfig';
 
-// Järjestetään tehtävät seuraavan deadline-päivämäärän mukaan nousevaan järjestykseen
-const sortedData = [...DATA].sort((a, b) => 
-  new Date(a.nextDueDate).getTime() - new Date(b.nextDueDate).getTime()
-);
+const db = getDatabase(app);
 
 ///////////// Tehtäväkortti /////////////
 const TaskCard = ({ item }: { item: Task }) => {
@@ -71,6 +43,27 @@ const TaskCard = ({ item }: { item: Task }) => {
 
 //////////// Pääkomponentti ////////////////
 export default function HomeScreen() {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  
+  // Haetaan tehtävät tietokannasta
+  useEffect(() => {
+    onValue(ref(db, '/tasks'), (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        //setTasks(Object.values(data) as Task[]);
+        setTasks(Object.entries(data).map(([key, value]) => ({ id: key , ...(value as object), })) as Task[]);
+      } else {
+        setTasks([]);
+      }
+      console.log(Object.entries(data));
+    })
+  }, []);
+
+  // Järjestetään tehtävät seuraavan deadline-päivämäärän mukaan nousevaan järjestykseen
+  const sortedData = tasks.sort((a, b) => 
+    new Date(a.nextDueDate).getTime() - new Date(b.nextDueDate).getTime()
+  );
+
   // Ryhmitellään ja järjestetään data deadlinen mukaan
   const overdueTasks = sortedData.filter(task => getDueInfo(task.nextDueDate).status === 'overdue');
   const todayTasks = sortedData.filter(task => getDueInfo(task.nextDueDate).status === 'today');
