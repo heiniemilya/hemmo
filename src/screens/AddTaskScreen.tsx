@@ -5,14 +5,14 @@ import { getDatabase, ref, push } from 'firebase/database';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { TimeUnit, TimeUnits, toIntervalDays } from '../utils/taskUtils';
 
-//////////// Pääkomponentti //////////////
-export default function AddTaskScreen() {
+const db = getDatabase(app);
 
-  const db = getDatabase(app);
+//////////// Pääkomponentti //////////////
+export default function AddTaskScreen() {  
 
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
-  const [lastDoneDate, setLastDoneDate] = useState<Date>(new Date());
+  const [nextDueDate, setNextDueDate] = useState<Date>(new Date());
   const [showPicker, setShowPicker] = useState(false);
   const [isRepeating, setIsRepeating] = useState(true);
   const [intervalNum, setIntervalNum] = useState('1'); // Syötettävä numero
@@ -32,7 +32,7 @@ export default function AddTaskScreen() {
     // Päivämäärä on menneisyydessä
     const today = new Date(); // Tämä päivä
     today.setHours(0, 0, 0, 0); // Ajan poistaminen
-    if (lastDoneDate < today) { // Syötetyn päivämäärän vertaus tähän päivään 
+    if (nextDueDate < today) { // Syötetyn päivämäärän vertaus tähän päivään 
       Alert.alert('Eräpäivä on menneisyydessä', 'Muokkaa eräpäivää');
       return;
     }
@@ -42,7 +42,10 @@ export default function AddTaskScreen() {
       title: title.trim(),
       category: category.trim() || 'Yleinen',
       intervalDays: days,
-      nextDueDate: lastDoneDate.toISOString().split('T')[0],
+      nextDueDate: nextDueDate.toISOString().split('T')[0],
+      timeUnit,
+      intervalNum,
+      isRepeating
     };
 
     // Tietojen vienti tietokantaan
@@ -51,7 +54,7 @@ export default function AddTaskScreen() {
     // Lomakkeen tyhjennys
     setTitle('');
     setCategory('');
-    setLastDoneDate(new Date());
+    setNextDueDate(new Date());
     setIsRepeating(true);
     setIntervalNum('1');
     setTimeUnit('days');
@@ -86,19 +89,19 @@ export default function AddTaskScreen() {
       <Text style={styles.label}>Seuraava eräpäivä *</Text>
       <TouchableOpacity style={styles.dateButton} onPress={() => setShowPicker(true)}>
         <Text style={styles.dateButtonText}>
-          {lastDoneDate.toLocaleDateString('fi-FI')}
+          {nextDueDate.toLocaleDateString('fi-FI')}
         </Text>
       </TouchableOpacity>
       {/* Kalenteri */}
       {showPicker && (
         <DateTimePicker
-          value={lastDoneDate}
+          value={nextDueDate}
           mode="date"
           display="default"
           onValueChange={(event, selectedDate) => {
             setShowPicker(Platform.OS === 'ios');
             if (selectedDate) {
-              setLastDoneDate(selectedDate);
+              setNextDueDate(selectedDate);
             }
           }}
           onDismiss={() => setShowPicker(false)}
