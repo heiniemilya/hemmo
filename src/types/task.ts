@@ -6,4 +6,5 @@ export interface Task {
   lastDoneDate: string; // 'YYYY-MM-DD'
   doneBy?: string;
   nextDueDate: string; // 'YYYY-MM-DD'
+  isDone?: boolean;
 }
