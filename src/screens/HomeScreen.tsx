@@ -15,6 +15,8 @@ const TaskCard = ({ item }: { item: Task }) => {
   // Tehtävän merkkaaminen valmiiksi
   const handleMarkDone = (task: Task) => {
     const updatedTask = markTaskAsDone(task);
+
+    // Päivitetään nextDueDate ja lisätään lastDoneDate ja isDone
     Alert.alert('Merkitse tehtävä valmiiksi', 'Oletko varma?', [
       {
         text: 'Peruuta',
@@ -26,9 +28,9 @@ const TaskCard = ({ item }: { item: Task }) => {
           update(ref(db, `/tasks/${task.id}`), {
             lastDoneDate: updatedTask.lastDoneDate,
             nextDueDate: updatedTask.nextDueDate,
+            isDone: updatedTask.isDone,
           });
         }
-        
       }
     ])
   };
@@ -71,13 +73,13 @@ export default function HomeScreen() {
     onValue(ref(db, '/tasks'), (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        //setTasks(Object.values(data) as Task[]);
-        setTasks(Object.entries(data).map(([key, value]) => ({ id: key , ...(value as object), })) as Task[]);
+        const allTasks = Object.entries(data).map(([key, value]) => ({ id: key , ...(value as object), })) as Task[];
+        // Suodatetaan valmiit pois listasta
+        setTasks(allTasks.filter((task) => !task.isDone));
       } else {
         setTasks([]);
       }
-      console.log(Object.entries(data));
-    })
+    });
   }, []);
 
   // Järjestetään tehtävät seuraavan deadline-päivämäärän mukaan nousevaan järjestykseen
