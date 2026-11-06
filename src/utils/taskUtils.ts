@@ -70,12 +70,15 @@ export const toIntervalDays = (amount: number, timeUnit: TimeUnit): number => {
 
 
 //////////// Tehtävän merkitseminen valmiiksi /////////////
-// Tietojen päivittäminen
+// Tietojen päivittäminen/lisääminen
 export const markTaskAsDone = (item: Task): Task => {
+    const isRecurring = item.intervalDays > 0;
+
     return {
         ...item, // säilytetään kaikki alkuperäisen tehtävän tiedot
         lastDoneDate: new Date().toISOString().split('T')[0], // asetetaan nykyhetki 'YYYY-MM-DD' muotoisena merkkijonona
-        nextDueDate: calculateNextDueDate(item.intervalDays), // lasketaan uusi eräpäivä toistovälin perusteella
+        nextDueDate: isRecurring ? calculateNextDueDate(item.intervalDays) : item.nextDueDate, // uusi eräpäivä vain toistuville
+        isDone: !isRecurring, // merkitään valmiiksi vain jos ei toistu
     };
 };
 
