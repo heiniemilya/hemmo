@@ -24,8 +24,16 @@ export default function AddTaskScreen() {
     const days = isRepeating ? toIntervalDays(num, timeUnit) : 0; // Syötetyn numeron muuttaminen päiviksi jos tehtävä on toistuva
 
     // Syötettyjen tietojen tarkistus
+    // Otsikko puuttuu
     if (!title.trim()) {
       Alert.alert('Otsikko puuttuu', 'Lisää otsikko');
+      return;
+    }
+    // Päivämäärä on menneisyydessä
+    const today = new Date(); // Tämä päivä
+    today.setHours(0, 0, 0, 0); // Ajan poistaminen
+    if (lastDoneDate < today) { // Syötetyn päivämäärän vertaus tähän päivään 
+      Alert.alert('Eräpäivä on menneisyydessä', 'Muokkaa eräpäivää');
       return;
     }
 
@@ -75,7 +83,7 @@ export default function AddTaskScreen() {
       />
 
       {/* Päivämäärä */}
-      <Text style={styles.label}>Ajankohta</Text>
+      <Text style={styles.label}>Seuraava eräpäivä *</Text>
       <TouchableOpacity style={styles.dateButton} onPress={() => setShowPicker(true)}>
         <Text style={styles.dateButtonText}>
           {lastDoneDate.toLocaleDateString('fi-FI')}
