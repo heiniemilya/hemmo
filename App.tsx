@@ -6,6 +6,7 @@ import TasksScreen from './src/screens/TasksScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import HouseholdScreen from './src/screens/HouseholdScreen';
 import AddTaskScreen from './src/screens/AddTaskScreen';
+import EditTaskScreen from './src/screens/EditTaskScreen';
 
 export default function App() {
 
@@ -71,6 +72,13 @@ export default function App() {
       <Tab.Screen
         name="Lisää tehtävä"
         component={AddTaskScreen}
+        options={{
+          tabBarItemStyle: { display: 'none' }, // Piilota
+        }}
+      />
+      <Tab.Screen
+        name="Muokkaa tehtävää"
+        component={EditTaskScreen}
         options={{
           tabBarItemStyle: { display: 'none' }, // Piilota
         }}
