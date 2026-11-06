@@ -14,12 +14,13 @@ const TaskCard = ({ item }: { item: Task }) => {
   return (
   <View style={[styles.card, ]}>
         <Text style={[styles.title, ]}>
-          {item.title}
+          {item.id}: {item.title}
         </Text>
   </View>
   );
 };
 
+/////////// Pääkomponentti /////////////
 export default function TasksScreen() {
   const navigation = useNavigation<any>();
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -29,11 +30,12 @@ export default function TasksScreen() {
     onValue(ref(db, '/tasks'), (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        setTasks(Object.values(data));
+        //setTasks(Object.values(data) as Task[]);
+        setTasks(Object.entries(data).map(([key, value]) => ({ id: key , ...(value as object), })) as Task[]);
       } else {
         setTasks([]);
       }
-      console.log(Object.values(data));
+      console.log(Object.entries(data));
     })
   }, []);
 
@@ -69,6 +71,7 @@ export default function TasksScreen() {
   );
 }
 
+////////// Tyyylit //////////////
 const styles = StyleSheet.create({
   container: {
     flex: 1,
