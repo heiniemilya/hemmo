@@ -84,6 +84,21 @@ export default function EditTaskScreen() {
     ]);
   }
 
+  ////// Peruutus ////////
+  const handleCancel = () => {
+    // Palautetaan lomakkeen arvot samaksi kuin tietokannassa 
+    if (task) {
+      setTitle(task.title || '');
+      setCategory(task.category || '');
+      setNextDueDate(task.nextDueDate ? new Date(task.nextDueDate) : new Date());
+      setIntervalNum(task.intervalNum ? String(task.intervalNum) : '');
+      setTimeUnit(task.timeUnit || 'kk');
+      setIsRepeating(task.isRepeating ?? false);
+    }
+    // Siirtyminen edelliselle sivulle
+    navigation.navigate(from || 'Home');
+  }
+
   /////// Tehtävän poistaminen ////////
   const handleDelete = () => {
      // Poistamisen varmistus
@@ -157,8 +172,8 @@ export default function EditTaskScreen() {
           <Switch
             value={isRepeating}
             onValueChange={setIsRepeating}
-            trackColor={{ false: '#cbcbcb', true: '#9ac194' }}
-            thumbColor={isRepeating ? 'green' : '#858585'}
+            trackColor={{ false: '#cbcbcb', true: '#8fadb9' }}
+            thumbColor={isRepeating ? '#426f80' : '#858585'}
             style={{marginBottom: 5}}
           />
         </View>
@@ -176,7 +191,7 @@ export default function EditTaskScreen() {
             {TimeUnits.map((unit) => {
               const isSelected = timeUnit === unit.key; // onko nappi valittu
               return (
-                <TouchableOpacity style={[styles.unitBtn, isSelected && {backgroundColor: 'green'}]}
+                <TouchableOpacity style={[styles.unitBtn, isSelected && {backgroundColor: '#426f80'}]}
                   key={unit.key} onPress={() => setTimeUnit(unit.key)}
                 >
                   <Text style={[styles.unitBtnText, isSelected && {color: 'white'}]}>
@@ -191,9 +206,14 @@ export default function EditTaskScreen() {
       </View>
 
       {/* Painikkeet */}
-      <TouchableOpacity style={[styles.button,  {backgroundColor: 'green'}]} onPress={handleUpdate}>
-        <Text style={{color: 'white'}}>Päivitä tehtävä</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonRow}>
+        <TouchableOpacity style={[styles.button, {borderWidth: 1,  borderColor: '#426f80' }]} onPress={handleCancel}>
+          <Text style={{color: '#375a67'}}>Peruuta</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.button, {backgroundColor: '#426f80'}]} onPress={handleUpdate}>
+          <Text style={{color: 'white'}}>Lisää tehtävä</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -276,12 +296,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   button: {
+    flex: 1,
     height: 40,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 8,
-    padding: 10,
+  },
+  buttonRow: {
     marginTop: 10,
+    flexDirection: 'row',
+    gap: 8,
   },
   delete: {
     flexDirection: 'row',
