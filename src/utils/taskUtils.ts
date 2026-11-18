@@ -29,6 +29,16 @@ export const getDueInfo = (dueDateStr: string) => {
         return {
         status: 'today' as DueStatus,
         label: 'tänään',
+        topRowBackgroundColor: '#c46327', // oranssi
+        cardBackgroundColor: '#f1b49a', 
+        borderColor: '#d4876d',
+        textDark: '#702203',
+        textLight: '#f5f0ee',
+        };
+    } else if (diffDays === 1) {
+        return {
+        status: 'tomorrow' as DueStatus,
+        label: 'huomenna',
         topRowBackgroundColor: '#c48827', // keltainen
         cardBackgroundColor: '#f1d19a', 
         borderColor: '#d4b06d',
@@ -38,12 +48,12 @@ export const getDueInfo = (dueDateStr: string) => {
     } else {
         return {
         status: 'future' as DueStatus,
-        label: diffDays === 1 ? 'huomenna' : `${diffDays} pv aikaa`, // tarkistetaan, onko ero 1 päivä vai useampi
-        topRowBackgroundColor: '#4d8551', // vihreä
-        cardBackgroundColor: '#aad2ad', 
-        borderColor: '#8bbf8b',
-        textDark: '#185a21',
-        textLight: '#e7f3e8',
+        label: `${diffDays} pv aikaa`, 
+        topRowBackgroundColor: '#4d7a85', // sininen
+        cardBackgroundColor: '#aac4d2', 
+        borderColor: '#8ba9bf',
+        textDark: '#274b5f',
+        textLight: '#e7eef3',
         };
     }
 };
