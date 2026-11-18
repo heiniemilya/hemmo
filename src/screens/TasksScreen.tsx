@@ -35,7 +35,6 @@ export default function TasksScreen() {
       } else {
         setTasks([]);
       }
-      console.log(Object.entries(data));
     })
   }, []);
 
@@ -49,12 +48,11 @@ export default function TasksScreen() {
     data: tasks.filter(task => task.category === category),
   }));
 
-
   return (
     <View style={styles.container}>
       <TouchableOpacity 
         style={styles.iconButton} 
-        onPress={() => navigation.navigate('Lisää tehtävä')}
+        onPress={() => navigation.navigate('Lisää tehtävä', { from: 'Tasks' })}
       >
         <FontAwesome name="plus" size={30} color="green" />
       </TouchableOpacity>

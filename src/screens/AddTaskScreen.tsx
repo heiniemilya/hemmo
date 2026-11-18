@@ -4,13 +4,15 @@ import { app } from '../../firebaseConfig';
 import { getDatabase, ref, push } from 'firebase/database';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { TimeUnit, TimeUnits, toIntervalDays } from '../utils/taskUtils';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const db = getDatabase(app);
 
 //////////// Pääkomponentti //////////////
 export default function AddTaskScreen() { 
-  const navigation = useNavigation<any>();     
+  const navigation = useNavigation<any>();
+  const route = useRoute<any>();
+  const { from } = route.params || {};
 
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
@@ -70,6 +72,19 @@ export default function AddTaskScreen() {
     ]);
   }
 
+  ////// Peruutus ////////
+  const handleCancel = () => {
+    //lomakkeen tyhjennys
+    setTitle('');
+    setCategory('');
+    setNextDueDate(new Date());
+    setIsRepeating(true);
+    setIntervalNum('1');
+    setTimeUnit('days');
+    // siirtyminen edelliselle sivulle
+    navigation.navigate(from || 'Home');
+  }
+
   return (
     // Lomake
     <View style={styles.container}>
@@ -123,8 +138,8 @@ export default function AddTaskScreen() {
           <Switch
             value={isRepeating}
             onValueChange={setIsRepeating}
-            trackColor={{ false: '#cbcbcb', true: '#9ac194' }}
-            thumbColor={isRepeating ? 'green' : '#858585'}
+            trackColor={{ false: '#cbcbcb', true: '#8fadb9' }}
+            thumbColor={isRepeating ? '#426f80' : '#858585'}
             style={{marginBottom: 5}}
           />
         </View>
@@ -142,7 +157,7 @@ export default function AddTaskScreen() {
             {TimeUnits.map((unit) => {
               const isSelected = timeUnit === unit.key; // onko nappi valittu
               return (
-                <TouchableOpacity style={[styles.unitBtn, isSelected && {backgroundColor: 'green'}]}
+                <TouchableOpacity style={[styles.unitBtn, isSelected && {backgroundColor: '#426f80'}]}
                   key={unit.key} onPress={() => setTimeUnit(unit.key)}
                 >
                   <Text style={[styles.unitBtnText, isSelected && {color: 'white'}]}>
@@ -156,10 +171,15 @@ export default function AddTaskScreen() {
         )}
       </View>
 
-      {/* Painike */}
-      <TouchableOpacity style={styles.button} onPress={handleSave}>
-        <Text style={{color: 'white'}}>Lisää tehtävä</Text>
-      </TouchableOpacity>
+      {/* Painikkeet */}
+      <View style={styles.buttonRow}>
+        <TouchableOpacity style={[styles.button, {borderWidth: 1,  borderColor: '#426f80' }]} onPress={handleCancel}>
+          <Text style={{color: '#375a67'}}>Peruuta</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.button, {backgroundColor: '#426f80'}]} onPress={handleSave}>
+          <Text style={{color: 'white'}}>Lisää tehtävä</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -242,11 +262,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   button: {
+    flex: 1,
     height: 40,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 8,
-    backgroundColor: 'green',
-    padding: 10,
   },
+  buttonRow: {
+    marginTop: 10,
+    flexDirection: 'row',
+    gap: 8,
+  }
 });
