@@ -4,11 +4,13 @@ import { app } from '../../firebaseConfig';
 import { getDatabase, ref, push } from 'firebase/database';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { TimeUnit, TimeUnits, toIntervalDays } from '../utils/taskUtils';
+import { useNavigation } from '@react-navigation/native';
 
 const db = getDatabase(app);
 
 //////////// Pääkomponentti //////////////
-export default function AddTaskScreen() {  
+export default function AddTaskScreen() { 
+  const navigation = useNavigation<any>();     
 
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
@@ -60,7 +62,12 @@ export default function AddTaskScreen() {
     setTimeUnit('days');
 
     // Ilmoitus tallentamisen onnistumisesta
-    Alert.alert('Valmis', 'Tehtävä lisätty');
+    Alert.alert('Valmis', 'Tehtävä lisätty', [
+      {
+        text: 'OK',
+        onPress: () =>navigation.navigate('Tasks'),
+      },
+    ]);
   }
 
   return (
