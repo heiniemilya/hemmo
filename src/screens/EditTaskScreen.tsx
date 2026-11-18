@@ -1,17 +1,19 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, Platform, Switch } from 'react-native';
 import { useEffect, useState } from 'react';
 import { app } from '../../firebaseConfig';
-import { getDatabase, ref, update } from 'firebase/database';
+import { getDatabase, ref, update, remove } from 'firebase/database';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { TimeUnit, TimeUnits, toIntervalDays } from '../utils/taskUtils';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 const db = getDatabase(app);
 
 //////////// Pääkomponentti //////////////
 export default function EditTaskScreen() {
+  const navigation = useNavigation<any>();    
   const route = useRoute<any>();
-  const { task } = route.params; // Muokattavan tehtävän tiedot 
+  const { task, from  } = route.params; // Muokattavan tehtävän tiedot 
 
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
@@ -32,8 +34,8 @@ export default function EditTaskScreen() {
     }
   }, [task]);
 
-  ////////// Tehtävän tallennus ////////////
-  const handleSave = () => {
+  ////////// Tehtävän päivitys ////////////
+  const handleUpdate = () => {
     const num = parseInt(intervalNum); // merkkijono luvuksi 
     const days = isRepeating ? toIntervalDays(num, timeUnit) : 0; // Syötetyn numeron muuttaminen päiviksi jos tehtävä on toistuva
 
@@ -52,7 +54,7 @@ export default function EditTaskScreen() {
     }
 
     // Tallennettava tehtävä
-    const taskToSave = {
+    const taskToUpdate = {
       title: title.trim(),
       category: category.trim() || 'Yleinen',
       intervalDays: days,
@@ -63,7 +65,7 @@ export default function EditTaskScreen() {
     };
 
     // Tietojen vienti tietokantaan
-    update(ref(db, `/tasks/${task.id}`), taskToSave);
+    update(ref(db, `/tasks/${task.id}`), taskToUpdate);
     
     // Lomakkeen tyhjennys
     setTitle('');
@@ -74,12 +76,37 @@ export default function EditTaskScreen() {
     setTimeUnit('days');
 
     // Ilmoitus tallentamisen onnistumisesta
-    Alert.alert('Valmis', 'Tehtävä päivitetty');
+    Alert.alert('Valmis', 'Tehtävä päivitetty', [
+      {
+        text: 'OK',
+        onPress: () => navigation.navigate(from || 'Home'),
+      },
+    ]);
+  }
+
+  /////// Tehtävän poistaminen ////////
+  const handleDelete = () => {
+     // Poistamisen varmistus
+    Alert.alert('Poista tehtävä', 'Oletko varma?', [
+        {
+          text: 'Peruuta',
+        },
+        {
+          text: 'OK',
+          onPress: () => {
+            remove(ref(db, `/tasks/${task.id}`))
+            navigation.navigate(from || 'Home')
+          } 
+        },
+      ]);
   }
 
   return (
     // Lomake
     <View style={styles.container}>
+        <TouchableOpacity style={[styles.delete ]} onPress={handleDelete}>
+          <FontAwesome6 name="trash-can" size={20} color="#333" />
+        </TouchableOpacity>
 
       {/* Tehtävä */}
       <Text style={styles.label}>Tehtävän nimi *</Text>
@@ -163,8 +190,8 @@ export default function EditTaskScreen() {
         )}
       </View>
 
-      {/* Painike */}
-      <TouchableOpacity style={styles.button} onPress={handleSave}>
+      {/* Painikkeet */}
+      <TouchableOpacity style={[styles.button,  {backgroundColor: 'green'}]} onPress={handleUpdate}>
         <Text style={{color: 'white'}}>Päivitä tehtävä</Text>
       </TouchableOpacity>
     </View>
@@ -253,7 +280,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 8,
-    backgroundColor: 'green',
     padding: 10,
+    marginTop: 10,
   },
+  delete: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center', 
+    paddingRight: 5,
+    marginBottom: 5,
+  }
 });
