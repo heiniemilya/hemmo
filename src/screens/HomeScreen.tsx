@@ -39,7 +39,8 @@ const TaskCard = ({ item }: { item: Task }) => {
   // Tehtävän muokkaaminen
   const navigation = useNavigation<any>();
   const handleEdit = (task: Task) => {
-    navigation.navigate('Muokkaa tehtävää', { task }); // Navigoi EditTaskScreenille ja vie mukanaan muokattavan tehtävän tiedot 
+    // Navigointi EditTaskScreenille 
+    navigation.navigate('Muokkaa tehtävää', { task , from: 'Home'}); // vie mukanaan muokattavan tehtävän tiedot ja miltä sivulta siirrytään
   }
 
   return (
@@ -97,12 +98,14 @@ export default function HomeScreen() {
   // Ryhmitellään ja järjestetään data deadlinen mukaan
   const overdueTasks = sortedData.filter(task => getDueInfo(task.nextDueDate).status === 'overdue');
   const todayTasks = sortedData.filter(task => getDueInfo(task.nextDueDate).status === 'today');
+  const tomorrowTasks = sortedData.filter(task => getDueInfo(task.nextDueDate).status === 'tomorrow');
   const futureTasks = sortedData.filter(task => getDueInfo(task.nextDueDate).status === 'future');
 
   // Luodaan SectionList-osiot 
   const sections = [
     { title: 'Myöhässä', data: overdueTasks },
     { title: 'Tänään', data: todayTasks },
+    { title: 'Huomenna', data: tomorrowTasks },
     { title: 'Tulevat', data: futureTasks },
   ].filter(section => section.data.length > 0); // Näytetään vain osiot, joissa on tehtäviä
 
