@@ -1,7 +1,7 @@
 import { Task } from "../types/task";
 
 //////// DueDaten vertailu nykyhetkeen DueStatus-tyypin palauttamiseksi //////////
-export type DueStatus = 'overdue' | 'today' | 'future'; // Määritellään DueStatus tyyppi
+export type DueStatus = 'overdue' | 'today' | 'tomorrow' | 'future'; // Määritellään DueStatus tyyppi
 
 // Funktio, joka ottaa vastaan 'YYYY-MM-DD' muotoisen merkkijonon ja palauttaa DueStatus-tyypin
 export const getDueInfo = (dueDateStr: string) => {
