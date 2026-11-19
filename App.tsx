@@ -1,12 +1,13 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { FontAwesome6} from '@expo/vector-icons';
+import { FontAwesome, FontAwesome6} from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import TasksScreen from './src/screens/TasksScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import HouseholdScreen from './src/screens/HouseholdScreen';
 import AddTaskScreen from './src/screens/AddTaskScreen';
 import EditTaskScreen from './src/screens/EditTaskScreen';
+import { TouchableOpacity } from 'react-native';
 
 export default function App() {
 
@@ -45,20 +46,36 @@ export default function App() {
       <Tab.Screen 
         name="Home" 
         component={HomeScreen} 
-        options={{ 
+        options={({ navigation, route }) => ({
           title: 'Ajankohtaista',
           tabBarShowLabel: false,
-          tabBarIcon: ({ size, color }) =>  <FontAwesome6 name={'house'} size={20} color={color} />
-        }} 
-      />
+          tabBarIcon: ({ color }) =>  <FontAwesome6 name={'house'} size={20} color={color} />,
+          headerRight: () => (
+             <TouchableOpacity 
+                style={{padding:10, marginRight: 10}} 
+                onPress={() => navigation.navigate('Lisää tehtävä', { from: route.name } )}
+              >
+                <FontAwesome name="plus" size={30} color="#568091" />
+              </TouchableOpacity>
+          ),
+        })}
+      /> 
       <Tab.Screen 
         name="Tasks"
         component={TasksScreen} 
-        options={{ 
+        options={({ navigation, route }) => ({
           title: 'Tehtävälista',
           tabBarShowLabel: false,
-          tabBarIcon: ({ size, color }) =>  <FontAwesome6 name={'list'} size={20} color={color} />
-        }} 
+          tabBarIcon: ({ color }) =>  <FontAwesome6 name={'list'} size={20} color={color} />,
+          headerRight: () => (
+             <TouchableOpacity 
+                style={{padding:10, marginRight: 10}} 
+                onPress={() => navigation.navigate('Lisää tehtävä', { from: route.name } )}
+              >
+                <FontAwesome name="plus" size={30} color="#568091" />
+              </TouchableOpacity>
+          ),
+        })} 
       />
       <Tab.Screen 
         name="Household" 
@@ -66,7 +83,7 @@ export default function App() {
         options={{ 
           title: 'Osallistujat',
           tabBarShowLabel: false,
-          tabBarIcon: ({ size, color }) =>  <FontAwesome6 name={'user-group'} size={17} color={color} />
+          tabBarIcon: ({ color }) =>  <FontAwesome6 name={'user-group'} size={17} color={color} />
         }} 
       />
       <Tab.Screen

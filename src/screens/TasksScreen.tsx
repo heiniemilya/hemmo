@@ -1,6 +1,4 @@
-import { FontAwesome, FontAwesome6 } from '@expo/vector-icons';
 import { SectionList, StyleSheet, Text, TouchableOpacity, View, } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { getDatabase, ref, onValue } from 'firebase/database';
 import { app } from '../../firebaseConfig';
 import { useState, useEffect } from 'react';
@@ -22,7 +20,7 @@ const TaskCard = ({ item }: { item: Task }) => {
 
 /////////// Pääkomponentti /////////////
 export default function TasksScreen() {
-  const navigation = useNavigation<any>();
+  
   const [tasks, setTasks] = useState<Task[]>([]);
 
   // haetaan tehtävät tietokannasta
@@ -50,12 +48,6 @@ export default function TasksScreen() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity 
-        style={styles.iconButton} 
-        onPress={() => navigation.navigate('Lisää tehtävä', { from: 'Tasks' })}
-      >
-        <FontAwesome name="plus" size={30} color="green" />
-      </TouchableOpacity>
       <SectionList
         sections={sections}
         keyExtractor={item => item.id}
@@ -87,10 +79,6 @@ const styles = StyleSheet.create({
   },
   card: {
     marginVertical: 6,
-  },
-  iconButton: {
-    padding:10,
-    opacity: 0.9,
   },
   title: {
     paddingHorizontal: 10,
