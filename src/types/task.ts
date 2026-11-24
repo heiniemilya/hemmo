@@ -8,3 +8,5 @@ export interface Task {
   nextDueDate: string; // 'YYYY-MM-DD'
   isDone?: boolean;
 }
+
+export type DueStatus = 'overdue' | 'today' | 'tomorrow' | 'future'; 
