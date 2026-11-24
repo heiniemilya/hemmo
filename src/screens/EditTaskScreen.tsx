@@ -211,7 +211,7 @@ export default function EditTaskScreen() {
           <Text style={{color: '#375a67'}}>Peruuta</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.button, {backgroundColor: '#426f80'}]} onPress={handleUpdate}>
-          <Text style={{color: 'white'}}>Lisää tehtävä</Text>
+          <Text style={{color: 'white'}}>Tallenna</Text>
         </TouchableOpacity>
       </View>
     </View>
