@@ -49,7 +49,7 @@ export default function App() {
         options={({ navigation, route }) => ({
           title: 'Ajankohtaista',
           tabBarShowLabel: false,
-          tabBarIcon: ({ color }) =>  <FontAwesome6 name={'house'} size={20} color={color} />,
+          tabBarIcon: ({ color }) =>  <FontAwesome6 name={'calendar-check'} size={21} color={color} />,
           headerRight: () => (
              <TouchableOpacity 
                 style={{padding:10, marginRight: 10}} 
@@ -64,7 +64,7 @@ export default function App() {
         name="Tasks"
         component={TasksScreen} 
         options={({ navigation, route }) => ({
-          title: 'Tehtävälista',
+          title: 'Tehtävät',
           tabBarShowLabel: false,
           tabBarIcon: ({ color }) =>  <FontAwesome6 name={'list'} size={20} color={color} />,
           headerRight: () => (
