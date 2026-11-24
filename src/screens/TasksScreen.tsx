@@ -1,26 +1,45 @@
-import { SectionList, StyleSheet, Text, TouchableOpacity, View, } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, } from 'react-native';
 import { getDatabase, ref, onValue } from 'firebase/database';
 import { app } from '../../firebaseConfig';
 import { useState, useEffect } from 'react';
 import { Task } from '../types/task';
+import { useNavigation } from '@react-navigation/native';
 
 const db = getDatabase(app);
+
+// Kategorioiden taustavärit
+const CARD_COLORS = [
+  '#588ca4', '#7ca1b5', '#617fab',  '#5b90c2', '#89accc',
+];
 
 ///////////// Tehtäväkortti /////////////
 const TaskCard = ({ item }: { item: Task }) => {
 
+  // Tehtävän muokkaaminen
+  const navigation = useNavigation<any>();
+  const handleEdit = (task: Task) => {
+    // Navigointi EditTaskScreenille 
+    navigation.navigate('Muokkaa tehtävää', { task , from: 'Tasks'}); // vie mukanaan muokattavan tehtävän tiedot ja miltä sivulta siirrytään
+  }
+
   return (
-  <View style={[styles.card, ]}>
-        <Text style={[styles.title, ]}>
-          {item.id}: {item.title}
+     <TouchableOpacity onPress={() => handleEdit(item)}>
+      <View style={styles.card}>
+        {/* Tehtävän nimi ja toistumisväli */}
+        <Text style={[styles.title, styles.cardText]}>
+          {item.title}
         </Text>
-  </View>
+        <Text style={[styles.cardText]}>
+          {item.intervalDays === 0 ? 'Ei toistu' : `${item.intervalDays} pv välein`}
+        </Text> 
+      </View>
+    </TouchableOpacity>
   );
 };
 
 /////////// Pääkomponentti /////////////
 export default function TasksScreen() {
-  
+
   const [tasks, setTasks] = useState<Task[]>([]);
 
   // haetaan tehtävät tietokannasta
@@ -48,15 +67,23 @@ export default function TasksScreen() {
 
   return (
     <View style={styles.container}>
-      <SectionList
-        sections={sections}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => <TaskCard item={item} />}
-        renderSectionHeader={({ section: { title } }) => (
-          <Text style={styles.sectionHeader}>{title}</Text>
-        )}
-        contentContainerStyle={{ paddingBottom: 20 }}
-      />
+      <ScrollView contentContainerStyle={{ paddingBottom: 20}}>
+        {sections.map((section, index) => (
+          <View key={section.title} >
+            <Text style={styles.sectionHeader}>{section.title}</Text>
+            <View 
+              style={[
+                styles.sectionCard, 
+                { backgroundColor: CARD_COLORS[index % CARD_COLORS.length] } // Kategorioiden värit 
+              ]}
+            >
+              {section.data.map(item => (
+                <TaskCard key={item.id} item={item} />
+              ))}
+            </View>
+          </View>
+        ))}
+      </ScrollView>
     </View>
   );
 }
@@ -65,23 +92,37 @@ export default function TasksScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#f2f3f7',
+    paddingHorizontal: 10,
   },
   sectionHeader: {
     fontSize: 15,
     fontWeight: 'bold',
     marginTop: 18,
-    marginBottom: 5,
-    color: '#7b96a1',
+    marginBottom: 4,
+    paddingLeft: 3,
+    color: '#6e858e',
     textTransform: 'uppercase',
   },
+  sectionCard:{
+    borderRadius: 8,
+    paddingHorizontal: 6,    
+    paddingVertical: 6,
+    gap: 6,
+  },
   card: {
-    marginVertical: 6,
+    borderRadius: 8,
+    paddingHorizontal: 10,    
+    paddingVertical: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#ffffff89',
+  },
+  cardText: {
+     color: '#274b5f',
   },
   title: {
-    paddingHorizontal: 10,
     fontSize: 21,
     fontWeight: 'bold',
     flex: 1,
