@@ -135,13 +135,13 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: 'bold',
     marginTop: 18,
-    marginBottom: 5,
-    color: '#7b96a1',
+    marginLeft: 3,
+    color: '#6e858e',
     textTransform: 'uppercase',
   },
   card: {
     borderRadius: 8,
-    marginVertical: 6,
+    marginVertical: 4,
   },
   topRow: {
     paddingHorizontal: 6,
